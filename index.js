@@ -41,7 +41,7 @@ const rooms = [
 
 //Common Api call
 app.use("/", (req, res, next) => {
-  res.status(200).send("Server Running Succesfully!");
+  res.status(200).send("Server Running Sucessfully!");
 });
 
 //create room
@@ -54,7 +54,9 @@ app.post("/create", (req, res) => {
     room_id: `${req.body.seats}${req.body.price_1hr}${rooms.length + 1}`,
     bookingDetail: [{}],
   });
+
   res.send(rooms);
+  console.log(rooms);
 });
 
 //Booking a room with customer_name, date, start, end & status
@@ -71,15 +73,58 @@ app.post("/book", (req, res) => {
         status: req.body.status,
       };
       let result = undefined;
-      rooms[i].bookingDetail.forEach((book)=>{
-        if(book.date.getTime()==Booking.date.getTime() && book.start === Booking.start){
-           // return res.status(400).send('Rooms not available on that time')
-           console.log("booking")
+      rooms[i].bookingDetail.forEach((book) => {
+        if (
+          book.date.getTime() == Booking.date.getTime() &&
+          book.start === Booking.start
+        ) {
+          result = 0;
+          // return res.status(400).send('Rooms not available on that time')
+          console.log("booking");
+        }else{
+          result = 1;
+          rooms[i].bookingDetail.push(Booking)
         }
-      })
+      });
+      if(result) return res.status(200).send('Booking comfirmed!!')
+      else
+      return res.status(400).send({error:'please select different time and date'})
     }
   }
 });
+
+//list customers with Booked Data with Room_name, Booked_status, Date, Start_Time and End_Time
+
+app.get("/lists",(req,res)=>{
+  let customerList = [];
+
+  rooms.forEach((room)=>{
+
+    let customerDetail = {room_name: room.name}
+    
+    room.bookingDetail.forEach((customer)=>{
+      customerDetail.customer_name = customer.cus_name;
+      customerDetail.date = customer.date;
+      customerDetail.start = customer.start;
+      customerDetail.end = customer.end;
+
+      customerList.push(customerDetail)
+    })
+  })
+  console.log(customerList);
+  res.status(200).send(customerList);
+});
+
+//list all rooms with Booked data with Customer_name, Room_name, Date, Start_Time and End_Time
+
+app.get("/booked-rooms", (req,res)=>{
+  console.log('list rooms');
+  res.status(200).send(rooms)
+})
+
+// app.get("/rooms", (req, res, next) => {
+//   res.send(rooms);
+// });
 
 const port = process.env.PORT || 5000;
 
