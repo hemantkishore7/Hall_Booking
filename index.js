@@ -96,6 +96,6 @@ app.get('/customers/:customerId/bookings', (req, res) => {
 });
 
 // Start the server
-app.listen(5000,"localhost", ()=>{
+app.listen(5000, ()=>{
   console.log(`server running on PORT 5000`);
 })
