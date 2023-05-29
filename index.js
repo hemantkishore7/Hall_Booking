@@ -9,6 +9,11 @@ const bookings = [];
 // Middleware
 app.use(express.json());
 
+//Testing
+app.get("/",(req,res)=>{
+  res.status(200).send("Welcome to Hall Booking Project")
+})
+
 
 // 1.Create a Room
 app.post('/rooms', (req, res) => {
